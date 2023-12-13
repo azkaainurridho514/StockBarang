@@ -4,10 +4,9 @@
  */
 package com.stockbarang.component;
 
+import com.stockbarang.event.EventMenuSelected;
 import com.stockbarang.model.ModelMenu;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -22,6 +21,11 @@ public class Navbar extends javax.swing.JPanel {
     /**
      * Creates new form 
      */
+    private EventMenuSelected event; 
+    public void addEventMenuSelected(EventMenuSelected event){
+        this.event = event;
+        listMenu.addEventMenuSelected(event);
+    }
     public Navbar() {
         initComponents();
         setOpaque(false);
@@ -70,7 +74,8 @@ public class Navbar extends javax.swing.JPanel {
         Graphics2D g2 = (Graphics2D)grphcs;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 //        Color g = new Color(0,0,0);
-        g2.setPaint(getBackground());
+//         g2.setPaint(new Color(244,244,11));
+//        g2.setBackground(new Color(36,52,80));
 //        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
 //        g2.fillRect(getWidth() - 20, 0, getWidth(), getHeight());
         super.paintChildren(grphcs);
