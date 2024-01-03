@@ -29,6 +29,7 @@ public class ListMenu <E extends Object> extends JList<E> {
         this.event = event;
     }
     public ListMenu() {
+        
         model = new DefaultListModel();
         setModel(model);
         addMouseListener(new MouseAdapter(){
@@ -87,6 +88,7 @@ public class ListMenu <E extends Object> extends JList<E> {
     
     @Override
     public ListCellRenderer<? super E> getCellRenderer() {
+        
         return new DefaultListCellRenderer(){
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object o, int index, boolean selected, boolean focus) {
@@ -99,6 +101,7 @@ public class ListMenu <E extends Object> extends JList<E> {
                 MenuItem item = new MenuItem(data);
                 item.setSelected(selectedIndex == index);
                 item.setOver(overIndex == index);
+                setAlignmentY(item.CENTER_ALIGNMENT);
                 return item;
             }
         };

@@ -6,7 +6,7 @@ package com.stockbarang.component;
 
 import com.stockbarang.event.EventMenuSelected;
 import com.stockbarang.model.ModelMenu;
-import java.awt.Color;
+import com.stockbarang.utils.ListMenu;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -28,21 +28,22 @@ public class Navbar extends javax.swing.JPanel {
     }
     public Navbar() {
         initComponents();
-        setOpaque(false);
         listMenu.setOpaque(false);
         listMenu.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        listMenu.setAlignmentY(RIGHT_ALIGNMENT);
         listMenu.setLayoutOrientation(listMenu.HORIZONTAL_WRAP);
         listMenu.setVisibleRowCount(-1);
+        
+        
         init();
     }
     private void init(){
         listMenu.addItem(new ModelMenu("DASHBOARD",  ModelMenu.MenuType.MENU));
         listMenu.addItem(new ModelMenu("STOCK",  ModelMenu.MenuType.MENU));
-        listMenu.addItem(new ModelMenu("USERS", ModelMenu.MenuType.MENU));
         listMenu.addItem(new ModelMenu("PLACE", ModelMenu.MenuType.MENU));
-        listMenu.addItem(new ModelMenu("REPORT", ModelMenu.MenuType.MENU));
-        listMenu.addItem(new ModelMenu("PROFILE",  ModelMenu.MenuType.MENU));
-        listMenu.addItem(new ModelMenu("LOGOUT",  ModelMenu.MenuType.MENU));
+        listMenu.addItem(new ModelMenu("CATEGORY", ModelMenu.MenuType.MENU));
+        listMenu.addItem(new ModelMenu("EXPORT", ModelMenu.MenuType.MENU));
+        listMenu.addItem(new ModelMenu("IMPORT", ModelMenu.MenuType.MENU));
     }   
     /**
      * This method is called from within the constructor to initialize the form.

@@ -4,17 +4,95 @@
  */
 package com.stockbarang.form;
 
+import com.stockbarang.db.ConnectDB;
+import com.stockbarang.db.Helper;
+import com.stockbarang.db.Query;
+import com.stockbarang.main.Main;
+import com.stockbarang.utils.stock_crud;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+//import static com.stockbarang.db.Query.getAllWithJoin3Table;
+
 /**
  *
  * @author asus
  */
-public class stock extends javax.swing.JPanel {
+public class stock extends javax.swing.JPanel  {
 
-    /**
-     * Creates new form stock
-     */
+    ConnectDB conn;
+    Statement st;
+    ResultSet re;
+    Query q;
+    Helper helper;
+    JComboBox comboBox = new JComboBox();
+    private DefaultComboBoxModel model;
+    DefaultCellEditor defaultCellEditor;
     public stock() {
         initComponents();
+        conn = new ConnectDB();
+        getStock("", 0);
+        txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+
+            public void insertUpdate(DocumentEvent e) {
+                // ketika teks dimasukkan
+                System.out.println("1");
+                getStock(txtSearch.getText(), txtFilter.getSelectedIndex());
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                // ketika teks diubah
+                System.out.println("2");
+                getStock(txtSearch.getText(), txtFilter.getSelectedIndex());
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                // ketika teks diubah
+                System.out.println("3");
+                getStock(txtSearch.getText(), txtFilter.getSelectedIndex());
+            }
+        });
+    }
+    
+    private void getStock(String search, int type){
+        Object header[] = {"ID", "NAME", "STOCK ALL", "PRICE", "CATEGORY", "PLACE"};
+        DefaultTableModel data = new DefaultTableModel(null,header);
+        tableData.setModel(data);
+        try {
+            if(search.equals("")){
+                String sql = q.getAllWithJoin3Table("items", "category", "place");
+                st = conn.con.createStatement();
+                re = st.executeQuery(sql);
+            }else{
+                String sql = q.getAllWithJoin3TableSearchFromTableWithFilter("items", "category", "place", txtSearch.getText(), type);
+                st = conn.con.createStatement();
+                re = st.executeQuery(sql);
+            }
+            TableColumn testColumn = tableData.getColumnModel().getColumn(2);
+            
+            
+            while(re.next()){
+                String k0 = re.getString("items_id");
+                String k1 = re.getString("items_name");
+                String k2 = re.getString("items_stock");
+                String k3 = helper.convertToRupiah(re.getString("items_price"));
+                String k4 = re.getString("category_name");
+                String k5 = re.getString("place_name");
+                
+                Object k[] = {k0, k1, k2, k3, k4, k5};
+                data.addRow(k);
+                
+            }
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Terkadi kesalahan saat memuat data!");
+        }
     }
 
     /**
@@ -26,35 +104,185 @@ public class stock extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tableData = new javax.swing.JTable();
+        txtSearch = new javax.swing.JTextField();
+        cmdAdd = new javax.swing.JButton();
+        cmdUpdate = new javax.swing.JButton();
+        cmdDelete = new javax.swing.JButton();
+        txtFilter = new javax.swing.JComboBox<>();
+        refresh = new javax.swing.JButton();
 
         setOpaque(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("STOCK");
+        tableData.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "", "Name", "Stock All", "Price", "Category", "Place"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tableData);
+        if (tableData.getColumnModel().getColumnCount() > 0) {
+            tableData.getColumnModel().getColumn(0).setPreferredWidth(20);
+            tableData.getColumnModel().getColumn(1).setPreferredWidth(150);
+        }
+
+        txtSearch.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                txtSearchInputMethodTextChanged(evt);
+            }
+        });
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
+
+        cmdAdd.setText("Add");
+        cmdAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdAddActionPerformed(evt);
+            }
+        });
+
+        cmdUpdate.setText("Update");
+        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdUpdateActionPerformed(evt);
+            }
+        });
+
+        cmdDelete.setText("Delete");
+        cmdDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDeleteActionPerformed(evt);
+            }
+        });
+
+        txtFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "By name", "By price", "By category", "By place" }));
+
+        refresh.setText("Refresh");
+        refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 981, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 983, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(refresh)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmdAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmdUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cmdAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                        .addComponent(cmdUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                        .addComponent(cmdDelete, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                        .addComponent(refresh)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(20, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtSearchInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtSearchInputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchInputMethodTextChanged
+
+    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
+        if(tableData.getSelectedColumn() != -1){
+            int selectedRow = tableData.getSelectedRow();
+            String id = tableData.getValueAt(selectedRow, 0).toString();
+            new stock_crud("update", id).setVisible(true);
+        }
+    }//GEN-LAST:event_cmdUpdateActionPerformed
+
+    private void cmdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddActionPerformed
+       new stock_crud("add", "").setVisible(true);
+    }//GEN-LAST:event_cmdAddActionPerformed
+
+    private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
+        getStock("", 0);
+    }//GEN-LAST:event_refreshActionPerformed
+
+    private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
+        if(tableData.getSelectedColumn() != -1){
+            int selectedRow = tableData.getSelectedRow();
+            String id = tableData.getValueAt(selectedRow, 0).toString();
+            String name = tableData.getValueAt(selectedRow, 1).toString();
+            try{
+                if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
+                    String sql = q.deleteOneData("items", id);
+                    st = conn.con.createStatement();
+                    st.execute(sql);
+                    getStock("", 0);
+                    JOptionPane.showMessageDialog(null, "Berhasil di hapus");
+                }
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null,e);
+            }
+        }
+    }//GEN-LAST:event_cmdDeleteActionPerformed
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton cmdAdd;
+    private javax.swing.JButton cmdDelete;
+    private javax.swing.JButton cmdUpdate;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton refresh;
+    private javax.swing.JTable tableData;
+    private javax.swing.JComboBox<String> txtFilter;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

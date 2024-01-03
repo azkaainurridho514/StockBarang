@@ -1,20 +1,58 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.stockbarang.form;
+
+import com.stockbarang.db.ConnectDB;
+import com.stockbarang.db.Helper;
+import com.stockbarang.db.Query;
+import com.stockbarang.utils.place_crud;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 /**
  *
  * @author asus
  */
-public class place extends javax.swing.JPanel {
+public class place extends javax.swing.JPanel  {
 
-    /**
-     * Creates new form stock
-     */
+    ConnectDB conn;
+    Statement st;
+    ResultSet re;
+    Query q;
+    Helper helper;
+    JComboBox comboBox = new JComboBox();
+    private DefaultComboBoxModel model;
+    DefaultCellEditor defaultCellEditor;
     public place() {
         initComponents();
+        conn = new ConnectDB();
+        getPlace();
+    }
+    
+    private void getPlace(){
+        Object header[] = {"ID", "NAME"};
+        DefaultTableModel data = new DefaultTableModel(null,header);
+        tableData.setModel(data);
+        try {
+            String sql = q.getAny("place", "place_id, place_name");
+            st = conn.con.createStatement();
+            re = st.executeQuery(sql);
+            while(re.next()){
+                String k0 = re.getString("place_id");
+                String k1 = re.getString("place_name");
+                
+                Object k[] = {k0, k1};
+                data.addRow(k);
+                
+            }
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Terkadi kesalahan saat memuat data!");
+        }
     }
 
     /**
@@ -26,35 +64,164 @@ public class place extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tableData = new javax.swing.JTable();
+        cmdAdd = new javax.swing.JButton();
+        cmdUpdate = new javax.swing.JButton();
+        cmdDelete = new javax.swing.JButton();
+        refresh = new javax.swing.JButton();
 
         setOpaque(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("PLACE");
+        tableData.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "", "Name", "Stock All", "Price", "Category", "Place"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tableData);
+        if (tableData.getColumnModel().getColumnCount() > 0) {
+            tableData.getColumnModel().getColumn(0).setPreferredWidth(20);
+            tableData.getColumnModel().getColumn(1).setPreferredWidth(150);
+        }
+
+        cmdAdd.setText("Add");
+        cmdAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdAddActionPerformed(evt);
+            }
+        });
+
+        cmdUpdate.setText("Update");
+        cmdUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdUpdateActionPerformed(evt);
+            }
+        });
+
+        cmdDelete.setText("Delete");
+        cmdDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdDeleteActionPerformed(evt);
+            }
+        });
+
+        refresh.setText("Refresh");
+        refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 981, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addGap(211, 211, 211)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cmdAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(refresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cmdUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(234, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addGap(77, 77, 77)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(86, 86, 86)
+                        .addComponent(refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmdAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmdUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(128, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
+        if(tableData.getSelectedColumn() != -1){
+            int selectedRow = tableData.getSelectedRow();
+            String id = tableData.getValueAt(selectedRow, 0).toString();
+            new place_crud("update", id).setVisible(true);
+        }
+    }//GEN-LAST:event_cmdUpdateActionPerformed
+
+    private void cmdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddActionPerformed
+       new place_crud("add", "").setVisible(true);
+    }//GEN-LAST:event_cmdAddActionPerformed
+
+    private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
+        getPlace();
+    }//GEN-LAST:event_refreshActionPerformed
+
+    private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
+        if(tableData.getSelectedColumn() != -1){
+            int selectedRow = tableData.getSelectedRow();
+            String id = tableData.getValueAt(selectedRow, 0).toString();
+            String name = tableData.getValueAt(selectedRow, 1).toString();
+            try{
+                String sql2 = q.getAllWhereIdBeforeDelete("items", "place", id);
+                st = conn.con.createStatement();
+                re = st.executeQuery(sql2);
+                System.out.println(sql2);
+                if(!re.next()){
+                    try{
+                        if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
+                            String sql = q.deleteOneData("place", id);
+                            st = conn.con.createStatement();
+                            st.execute(sql);
+                            getPlace();
+                            JOptionPane.showMessageDialog(null, "Berhasil di hapus");
+                        }
+                    }catch(Exception e){
+                        JOptionPane.showMessageDialog(null,"Terjadi kesalahan!");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null, "Masih ada stock yang memakai kategori ini");
+                }
+                
+            }catch(Exception e){
+                System.out.println(e);
+            }
+        }
+    }//GEN-LAST:event_cmdDeleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton cmdAdd;
+    private javax.swing.JButton cmdDelete;
+    private javax.swing.JButton cmdUpdate;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton refresh;
+    private javax.swing.JTable tableData;
     // End of variables declaration//GEN-END:variables
 }

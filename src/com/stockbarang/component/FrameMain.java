@@ -4,16 +4,20 @@
  */
 package com.stockbarang.component;
 
+import com.stockbarang.db.ConnectDB;
+import com.stockbarang.db.Query;
 import com.stockbarang.event.EventMenuSelected;
 import com.stockbarang.form.dashboard;
 import com.stockbarang.form.place;
-import com.stockbarang.form.profile;
-import com.stockbarang.form.report;
 import com.stockbarang.form.stock;
-import com.stockbarang.form.user;
+import com.stockbarang.form.category;
+import com.stockbarang.form.importItems;
+import com.stockbarang.form.exportItems;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
@@ -23,33 +27,15 @@ import javax.swing.JOptionPane;
  */
 public class FrameMain extends javax.swing.JPanel {
 
-    /**
-     * Creates new form FrameMain
-     */
+    ConnectDB conn;
+    Statement st;
+    ResultSet re;
+    Query q;
     public FrameMain() {
         initComponents();
+        conn = new ConnectDB();
         setOpaque(false);
-        navbar2.addEventMenuSelected(new EventMenuSelected(){
-            @Override
-            public void selected(int index) {
-                if(index == 0){
-                    setForm(new dashboard());
-                }else if(index == 1){
-                    setForm(new stock());
-                }else if(index == 2){
-                    setForm(new user());
-                }else if(index == 3){
-                    setForm(new place());
-                }else if(index == 4){
-                    setForm(new report());
-                }else if(index == 5){
-                    setForm(new profile());
-                }else if(index == 6){
-                    JOptionPane.showConfirmDialog(null, "Logout?");
-                }
-            }
-        
-        });
+        setLayout();
         setForm(new dashboard());
     }
     
@@ -59,6 +45,28 @@ public class FrameMain extends javax.swing.JPanel {
         mainPanel.repaint();
         mainPanel.revalidate();
     }
+    
+    private void setLayout(){
+        navbar2.addEventMenuSelected(new EventMenuSelected(){
+                @Override
+                public void selected(int index) {
+                    if(index == 0){
+                        setForm(new dashboard());
+                    }else if(index == 1){
+                        setForm(new stock());
+                    }else if(index == 2){
+                        setForm(new place());
+                    }else if(index == 3){
+                        setForm(new category());
+                    }else if(index == 4){
+                        setForm(new exportItems());
+                    }else if(index == 5){
+                        setForm(new importItems());
+                    }
+                }
+            });
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -71,42 +79,31 @@ public class FrameMain extends javax.swing.JPanel {
 
         mainPanel = new javax.swing.JPanel();
         navbar2 = new com.stockbarang.component.Navbar();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        profile1 = new com.stockbarang.component.Profile();
+        jLabel1 = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(8, 157, 206));
-
-        mainPanel.setBackground(new java.awt.Color(1, 33, 105));
         mainPanel.setToolTipText("");
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        navbar2.setBackground(new java.awt.Color(1, 33, 105));
-        navbar2.setOpaque(true);
+        navbar2.setBackground(new java.awt.Color(148, 163, 184));
 
-        jPanel1.setBackground(new java.awt.Color(1, 33, 105));
+        jLabel1.setText("jLabel1");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 147, Short.MAX_VALUE)
+        javax.swing.GroupLayout profile1Layout = new javax.swing.GroupLayout(profile1);
+        profile1.setLayout(profile1Layout);
+        profile1Layout.setHorizontalGroup(
+            profile1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(profile1Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(jLabel1)
+                .addContainerGap(58, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        jPanel2.setBackground(new java.awt.Color(1, 33, 105));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        profile1Layout.setVerticalGroup(
+            profile1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(profile1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -114,28 +111,25 @@ public class FrameMain extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1012, Short.MAX_VALUE)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(5, 5, 5)
-                        .addComponent(navbar2, javax.swing.GroupLayout.PREFERRED_SIZE, 707, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(5, 5, 5)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(10, 10, 10))
+                        .addComponent(navbar2, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(profile1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(navbar2, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
-                .addGap(10, 10, 10))
+                    .addComponent(profile1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(navbar2, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -152,10 +146,10 @@ public class FrameMain extends javax.swing.JPanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel mainPanel;
     private com.stockbarang.component.Navbar navbar2;
+    private com.stockbarang.component.Profile profile1;
     // End of variables declaration//GEN-END:variables
 
     public void addEventMenuSelected(EventMenuSelected eventMenuSelected) {
