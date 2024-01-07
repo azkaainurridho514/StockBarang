@@ -21,5 +21,5 @@ public class ModelMenu {
     }
     public ModelMenu(){}
     private String name;
-     private MenuType type;
+    private MenuType type;
 }

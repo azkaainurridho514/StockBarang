@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 03, 2024 at 09:19 AM
+-- Generation Time: Jan 07, 2024 at 04:45 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -38,9 +38,7 @@ CREATE TABLE `category` (
 
 INSERT INTO `category` (`category_id`, `category_name`) VALUES
 (2, 'Minuman'),
-(3, 'Snack'),
-(6, 'Peralatan'),
-(7, 'coba');
+(3, 'Snack');
 
 -- --------------------------------------------------------
 
@@ -50,18 +48,11 @@ INSERT INTO `category` (`category_id`, `category_name`) VALUES
 
 CREATE TABLE `export` (
   `export_id` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
   `export_desc` text NOT NULL,
-  `export_date` date NOT NULL,
-  `export_stock_all` varchar(10) NOT NULL
+  `export_date` varchar(20) NOT NULL,
+  `export_stock_all` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `export`
---
-
-INSERT INTO `export` (`export_id`, `export_desc`, `export_date`, `export_stock_all`) VALUES
-(1, 'export pertama', '2023-12-30', '300'),
-(2, 'export kedua', '2023-12-31', '250');
 
 -- --------------------------------------------------------
 
@@ -71,26 +62,12 @@ INSERT INTO `export` (`export_id`, `export_desc`, `export_date`, `export_stock_a
 
 CREATE TABLE `export_items` (
   `export_items_id` int(11) NOT NULL,
-  `export_items_export_id` int(11) NOT NULL,
-  `export_items_items_id` int(11) NOT NULL,
-  `export_items_category_id` int(11) NOT NULL,
-  `export_items_place_id` int(11) NOT NULL,
+  `export_items_export_id` varchar(11) NOT NULL,
+  `export_items_items_id` varchar(11) NOT NULL,
+  `export_items_category_id` varchar(11) NOT NULL,
+  `export_items_place_id` varchar(11) NOT NULL,
   `export_items_stock` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `export_items`
---
-
-INSERT INTO `export_items` (`export_items_id`, `export_items_export_id`, `export_items_items_id`, `export_items_category_id`, `export_items_place_id`, `export_items_stock`) VALUES
-(1, 1, 8, 2, 22, '200'),
-(2, 1, 7, 2, 1, '100'),
-(3, 2, 15, 3, 1, '100'),
-(4, 2, 6, 7, 22, '150'),
-(5, 1, 7, 7, 1, '200'),
-(6, 1, 7, 2, 1, '100'),
-(7, 2, 15, 3, 1, '100'),
-(8, 1, 6, 2, 22, '150');
 
 -- --------------------------------------------------------
 
@@ -100,18 +77,11 @@ INSERT INTO `export_items` (`export_items_id`, `export_items_export_id`, `export
 
 CREATE TABLE `import` (
   `import_id` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
   `import_desc` text NOT NULL,
-  `import_date` date NOT NULL,
-  `import_stock_all` varchar(10) NOT NULL
+  `import_date` varchar(20) NOT NULL,
+  `import_stock_all` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `import`
---
-
-INSERT INTO `import` (`import_id`, `import_desc`, `import_date`, `import_stock_all`) VALUES
-(1, 'import pertama', '2023-12-22', '200'),
-(2, 'import ke dua', '2023-12-30', '150');
 
 -- --------------------------------------------------------
 
@@ -128,18 +98,6 @@ CREATE TABLE `import_items` (
   `import_items_stock` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `import_items`
---
-
-INSERT INTO `import_items` (`import_items_id`, `import_items_import_id`, `import_items_items_id`, `import_items_category_id`, `import_items_place_id`, `import_items_stock`) VALUES
-(1, 1, 7, 2, 1, '50'),
-(2, 1, 8, 6, 22, '50'),
-(3, 1, 15, 3, 1, '100'),
-(4, 2, 15, 6, 22, '50'),
-(5, 2, 7, 6, 22, '50'),
-(6, 2, 6, 3, 1, '50');
-
 -- --------------------------------------------------------
 
 --
@@ -154,16 +112,6 @@ CREATE TABLE `items` (
   `items_price` varchar(20) NOT NULL,
   `items_stock` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `items`
---
-
-INSERT INTO `items` (`items_id`, `items_category_id`, `items_place_id`, `items_name`, `items_price`, `items_stock`) VALUES
-(6, 1, 1, 'produk enam', '2500', '322'),
-(7, 1, 1, 'produk tujuh', '2000', '111'),
-(8, 1, 1, 'produk delapan', '3500', '322'),
-(15, 1, 1, 'kjghsdrg', '2000', '34123');
 
 -- --------------------------------------------------------
 
@@ -181,8 +129,7 @@ CREATE TABLE `place` (
 --
 
 INSERT INTO `place` (`place_id`, `place_name`) VALUES
-(1, 'GD1'),
-(22, 'GD2');
+(1, 'GD1');
 
 -- --------------------------------------------------------
 
@@ -194,17 +141,16 @@ CREATE TABLE `users` (
   `users_id` int(11) NOT NULL,
   `role` int(11) NOT NULL COMMENT '1 = admin, 0 = user',
   `users_name` varchar(55) NOT NULL,
-  `users_password` varchar(55) NOT NULL,
-  `users_email` varchar(55) NOT NULL
+  `users_password` varchar(55) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`users_id`, `role`, `users_name`, `users_password`, `users_email`) VALUES
-(1, 1, 'Azka Ainurridho', 'azka123', 'azkaainurridho@gmail.com'),
-(2, 0, 'Muhammad asep', 'asep123', 'mohasep@gmail.com');
+INSERT INTO `users` (`users_id`, `role`, `users_name`, `users_password`) VALUES
+(1, 1, 'Azka Ainurridho', 'azka123'),
+(2, 0, 'Muhammad asep', 'asep123');
 
 --
 -- Indexes for dumped tables
@@ -272,13 +218,13 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `export`
 --
 ALTER TABLE `export`
-  MODIFY `export_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `export_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `export_items`
 --
 ALTER TABLE `export_items`
-  MODIFY `export_items_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `export_items_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `import`
@@ -296,7 +242,7 @@ ALTER TABLE `import_items`
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `items_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `items_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `place`
@@ -308,7 +254,7 @@ ALTER TABLE `place`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `users_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `users_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

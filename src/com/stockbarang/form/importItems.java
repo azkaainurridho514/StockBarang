@@ -7,58 +7,65 @@ package com.stockbarang.form;
 import com.stockbarang.db.ConnectDB;
 import com.stockbarang.db.Helper;
 import com.stockbarang.db.Query;
+import com.stockbarang.model.Auth;
+import com.stockbarang.utils.export_import_crud;
 import com.stockbarang.utils.import_export_detail;
+import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import javax.swing.JOptionPane;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
-/**
- *
- * @author asus
- */
+import javax.swing.JOptionPane;
+
+
 public class importItems extends javax.swing.JPanel {
-
     ConnectDB conn;
     Statement st;
     ResultSet re;
     Query q;
-    String id, desc, date, stockAll;
+    Helper helper;
+    String user_id = "";
+    String user_name = "";
+    String user_role = "";
     public importItems() {
         initComponents();
         conn = new ConnectDB();
-        getImport("");
+        getExport("");
+        user_id = Auth.getUserID();
+        user_name = Auth.getUser();
+        user_role = Auth.getUserRole();
         txtFilter.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {
                 // ketika teks dimasukkan
                 System.out.println("1");
-                getImport(txtFilter.getText());
+                getExport(txtFilter.getText());
             }
 
             public void removeUpdate(DocumentEvent e) {
                 // ketika teks diubah
                 System.out.println("2");
-                getImport(txtFilter.getText());
+                getExport(txtFilter.getText());
             }
 
             public void changedUpdate(DocumentEvent e) {
                 // ketika teks diubah
                 System.out.println("3");
-                getImport(txtFilter.getText());
+                getExport(txtFilter.getText());
             }
         });
     }
     
-    private void getImport(String search){
+    private void getExport(String search){
         Object header[] = {"ID", "DESCRIPTION", "DATE", "STOCK ALL"};
         DefaultTableModel data = new DefaultTableModel(null,header);
         tableData.setModel(data);
         try {
             if(search.equals("")){
-                String sql = q.getAll("import");
+                String sql = q.getAllWhereAnotherId("import", "users", "2");
                 st = conn.con.createStatement();
                 re = st.executeQuery(sql);
             }else{
@@ -66,7 +73,6 @@ public class importItems extends javax.swing.JPanel {
                 st = conn.con.createStatement();
                 re = st.executeQuery(sql);
             }
-            TableColumn testColumn = tableData.getColumnModel().getColumn(2);
             
             
             while(re.next()){
@@ -74,14 +80,14 @@ public class importItems extends javax.swing.JPanel {
                 String k1 = re.getString("import_desc");
                 String k2 = re.getString("import_date");
                 String k3 = re.getString("import_stock_all");
-                
-                
-                Object k[] = {k0, k1, k2, k3};
+                String  nulls = "-";
+                Object k[] = {k0, k1, k2, k3 == null ? nulls : k3};
                 data.addRow(k);
                 
             }
         }
         catch(Exception e){
+            System.out.println(e);
             JOptionPane.showMessageDialog(null,"Terkadi kesalahan saat memuat data!");
         }
     }
@@ -98,10 +104,10 @@ public class importItems extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tableData = new javax.swing.JTable();
         btnDelete = new javax.swing.JButton();
-        btnUpdate = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
         txtFilter = new javax.swing.JTextField();
         btnDetail = new javax.swing.JButton();
+        print = new javax.swing.JButton();
 
         setOpaque(false);
 
@@ -125,14 +131,24 @@ public class importItems extends javax.swing.JPanel {
             }
         });
 
-        btnUpdate.setText("Update");
-
         btnAdd.setText("Add");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnDetail.setText("Detail");
         btnDetail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDetailActionPerformed(evt);
+            }
+        });
+
+        print.setText("Print");
+        print.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printActionPerformed(evt);
             }
         });
 
@@ -146,11 +162,11 @@ public class importItems extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(print)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnDetail)
                         .addGap(18, 18, 18)
                         .addComponent(btnAdd)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnUpdate)
                         .addGap(18, 18, 18)
                         .addComponent(btnDelete))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 930, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -162,10 +178,10 @@ public class importItems extends javax.swing.JPanel {
                 .addGap(44, 44, 44)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDelete)
-                    .addComponent(btnUpdate)
                     .addComponent(btnAdd)
                     .addComponent(txtFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDetail))
+                    .addComponent(btnDetail)
+                    .addComponent(print))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(40, Short.MAX_VALUE))
@@ -173,42 +189,79 @@ public class importItems extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-         if(tableData.getSelectedColumn() != -1){
-            int selectedRow = tableData.getSelectedRow();
-            String id = tableData.getValueAt(selectedRow, 0).toString();
-            String name = tableData.getValueAt(selectedRow, 1).toString();
-            try{
-                if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
-//                    String sql = q.deleteOneData("import", id);
-//                    st = conn.con.createStatement();
-//                    st.execute(sql);
-//                    getImport("");
-                    JOptionPane.showMessageDialog(null, "Berhasil di hapus");
-                }
-            }catch(Exception e){
-                JOptionPane.showMessageDialog(null,e);
-            }
+       
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        } else{
+            if(tableData.getSelectedColumn() != -1){
+               int selectedRow = tableData.getSelectedRow();
+               String id = tableData.getValueAt(selectedRow, 0).toString();
+               String name = tableData.getValueAt(selectedRow, 1).toString();
+               try{
+                   if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
+                       String sql = q.deleteOneData("import", id);
+                       st = conn.con.createStatement();
+                       st.execute(sql);
+                       getExport("");
+                       JOptionPane.showMessageDialog(null, "Berhasil di hapus");
+                   }
+               }catch(Exception e){
+                   JOptionPane.showMessageDialog(null,e);
+               }
+           }
         }
+        
+       
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+//        try{
+//            String column = ""; 
+//            String sql = q.insertItems("");
+//            st.execute(sql);
+//            
+//        }catch(Exception e){
+//            
+//        }
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            new export_import_crud("import",user_id, "").setVisible(true);
+        }
+    }//GEN-LAST:event_btnAddActionPerformed
+
     private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
-        if(tableData.getSelectedColumn() != -1){
-            int selectedRow = tableData.getSelectedRow();
-            String id = tableData.getValueAt(selectedRow, 0).toString();
-            String desc = tableData.getValueAt(selectedRow, 1).toString();
-            String date = tableData.getValueAt(selectedRow, 2).toString();
-            String stock = tableData.getValueAt(selectedRow, 3).toString();
-            new import_export_detail(id, desc, stock, date, "import").setVisible(true);
+        
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            if(tableData.getSelectedColumn() != -1){
+                int selectedRow = tableData.getSelectedRow();
+                String id = tableData.getValueAt(selectedRow, 0).toString();
+                String desc = tableData.getValueAt(selectedRow, 1).toString();
+                String date = tableData.getValueAt(selectedRow, 2).toString();
+                String stock = tableData.getValueAt(selectedRow, 3).toString();
+                System.out.print(id+desc+date+stock);
+                new import_export_detail(id, desc, stock, date, "import").setVisible(true);
+            }
         }
     }//GEN-LAST:event_btnDetailActionPerformed
+
+    private void printActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printActionPerformed
+         try {
+            tableData.print();
+        } catch (PrinterException ex) {
+            Logger.getLogger(stock.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_printActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDetail;
-    private javax.swing.JButton btnUpdate;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton print;
     private javax.swing.JTable tableData;
     private javax.swing.JTextField txtFilter;
     // End of variables declaration//GEN-END:variables

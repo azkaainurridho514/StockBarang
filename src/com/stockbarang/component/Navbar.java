@@ -44,6 +44,7 @@ public class Navbar extends javax.swing.JPanel {
         listMenu.addItem(new ModelMenu("CATEGORY", ModelMenu.MenuType.MENU));
         listMenu.addItem(new ModelMenu("EXPORT", ModelMenu.MenuType.MENU));
         listMenu.addItem(new ModelMenu("IMPORT", ModelMenu.MenuType.MENU));
+        listMenu.addItem(new ModelMenu("LOGIN / REGISTER", ModelMenu.MenuType.MENU));
     }   
     /**
      * This method is called from within the constructor to initialize the form.

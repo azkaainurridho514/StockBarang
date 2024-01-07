@@ -32,7 +32,7 @@ public class stock_crud extends javax.swing.JFrame {
     String action = "";
     String id = "";
     public stock_crud(String act, String ids) {
-        IntelliJTheme.setup(stock_crud.class.getResourceAsStream("/template.theme.json"));
+//        IntelliJTheme.setup(stock_crud.class.getResourceAsStream("/template.theme.json"));
         conn = new ConnectDB();
         initComponents();
         if(act.equals("add")){
@@ -192,11 +192,11 @@ public class stock_crud extends javax.swing.JFrame {
                 
                 if(JOptionPane.showConfirmDialog(null, "Sudah benar?") ==  0){
                     if(action.equals("add") || action.equals("")){
-                        String column = "'"+ category.charAt(0) +"', '"+ place.charAt(0) +"','"+ namaInput.getText() +"', '"+ hargaInput.getText() +"', '"+ stockInput.getText() +"'"; 
+                        String column = "'"+ category.charAt(0) +category.charAt(1) +category.charAt(2) +"', '"+ place.charAt(0) +place.charAt(1) +place.charAt(2) +"','"+ namaInput.getText() +"', '"+ hargaInput.getText() +"', '"+ stockInput.getText() +"'"; 
                         String sql = q.insertItems(column);
                         st.execute(sql);
                     }else{
-                        String column = "items_category_id='"+ category.charAt(0) +"', items_place_id='"+ place.charAt(0) +"', items_name='"+ namaInput.getText() +"', items_price='"+ hargaInput.getText() +"', items_stock='"+ stockInput.getText() +"'";
+                        String column = "items_category_id='"+ category.charAt(0) +category.charAt(1) +category.charAt(2) +"', items_place_id='"+ place.charAt(0) +place.charAt(1) +place.charAt(2) +"', items_name='"+ namaInput.getText() +"', items_price='"+ hargaInput.getText() +"', items_stock='"+ stockInput.getText() +"'";
                         String sql = q.updateItemsWhereId("items", id, column);
                         st.execute(sql);
                     }
@@ -244,7 +244,7 @@ public class stock_crud extends javax.swing.JFrame {
             st = conn.con.createStatement();
             re = st.executeQuery(sql);
             while(re.next()){
-                String k1 = re.getString("category_id") + ", " + re.getString("category_name");
+                String k1 = re.getString("category_id") + "  , " + re.getString("category_name");
                 model.addElement(k1);
             }
              categoryInput.setModel(model);
@@ -261,7 +261,7 @@ public class stock_crud extends javax.swing.JFrame {
             st = conn.con.createStatement();
             re = st.executeQuery(sql);
             while(re.next()){
-                String k1 = re.getString("place_id") + ", " + re.getString("place_name");
+                String k1 = re.getString("place_id") + "  , " + re.getString("place_name");
                 model.addElement(k1);
             }
              placeInput.setModel(model);

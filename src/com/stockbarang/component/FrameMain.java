@@ -7,6 +7,7 @@ package com.stockbarang.component;
 import com.stockbarang.db.ConnectDB;
 import com.stockbarang.db.Query;
 import com.stockbarang.event.EventMenuSelected;
+import com.stockbarang.form.auth;
 import com.stockbarang.form.dashboard;
 import com.stockbarang.form.place;
 import com.stockbarang.form.stock;
@@ -62,6 +63,8 @@ public class FrameMain extends javax.swing.JPanel {
                         setForm(new exportItems());
                     }else if(index == 5){
                         setForm(new importItems());
+                    }else if(index == 6){
+                        setForm(new auth());
                     }
                 }
             });
@@ -87,23 +90,26 @@ public class FrameMain extends javax.swing.JPanel {
 
         navbar2.setBackground(new java.awt.Color(148, 163, 184));
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("STOCK BARANG");
 
         javax.swing.GroupLayout profile1Layout = new javax.swing.GroupLayout(profile1);
         profile1.setLayout(profile1Layout);
         profile1Layout.setHorizontalGroup(
             profile1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(profile1Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addComponent(jLabel1)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                .addContainerGap())
         );
         profile1Layout.setVerticalGroup(
             profile1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(profile1Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, profile1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(23, 23, 23))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

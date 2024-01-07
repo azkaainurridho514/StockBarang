@@ -24,7 +24,7 @@ public class category_crud extends javax.swing.JFrame {
     String action = "";
     String id = "";
     public category_crud(String act, String ids) {
-        IntelliJTheme.setup(category_crud.class.getResourceAsStream("/template.theme.json"));
+//        IntelliJTheme.setup(category_crud.class.getResourceAsStream("/template.theme.json"));
         conn = new ConnectDB();
         initComponents();
         if(act.equals("add")){

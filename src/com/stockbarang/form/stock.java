@@ -8,9 +8,13 @@ import com.stockbarang.db.ConnectDB;
 import com.stockbarang.db.Helper;
 import com.stockbarang.db.Query;
 import com.stockbarang.main.Main;
+import com.stockbarang.model.Auth;
 import com.stockbarang.utils.stock_crud;
+import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -34,9 +38,21 @@ public class stock extends javax.swing.JPanel  {
     JComboBox comboBox = new JComboBox();
     private DefaultComboBoxModel model;
     DefaultCellEditor defaultCellEditor;
+    String user_id = "";
+    String user_name = "";
+    String user_role = "";
     public stock() {
         initComponents();
         conn = new ConnectDB();
+        user_id = Auth.getUserID();
+        user_name = Auth.getUser();
+        user_role = Auth.getUserRole();
+//        if(user_id.equals("") || user_name.equals("")){
+//            JOptionPane.showMessageDialog(null, "LOGIN DULU");
+//            Object header[] = {"ID", "NAME", "STOCK ALL", "PRICE", "CATEGORY", "PLACE"};
+//            DefaultTableModel data = new DefaultTableModel(null,header);
+//        }else{
+//        }
         getStock("", 0);
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 
@@ -112,6 +128,7 @@ public class stock extends javax.swing.JPanel  {
         cmdDelete = new javax.swing.JButton();
         txtFilter = new javax.swing.JComboBox<>();
         refresh = new javax.swing.JButton();
+        print = new javax.swing.JButton();
 
         setOpaque(false);
 
@@ -190,6 +207,13 @@ public class stock extends javax.swing.JPanel  {
             }
         });
 
+        print.setText("Print");
+        print.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -203,6 +227,8 @@ public class stock extends javax.swing.JPanel  {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(print)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(refresh)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmdAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -224,7 +250,8 @@ public class stock extends javax.swing.JPanel  {
                         .addComponent(cmdAdd, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                         .addComponent(cmdUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                         .addComponent(cmdDelete, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                        .addComponent(refresh)))
+                        .addComponent(refresh)
+                        .addComponent(print)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(20, Short.MAX_VALUE))
@@ -236,15 +263,27 @@ public class stock extends javax.swing.JPanel  {
     }//GEN-LAST:event_txtSearchInputMethodTextChanged
 
     private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
-        if(tableData.getSelectedColumn() != -1){
-            int selectedRow = tableData.getSelectedRow();
-            String id = tableData.getValueAt(selectedRow, 0).toString();
-            new stock_crud("update", id).setVisible(true);
+
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            if(tableData.getSelectedColumn() != -1){
+                int selectedRow = tableData.getSelectedRow();
+                String id = tableData.getValueAt(selectedRow, 0).toString();
+                new stock_crud("update", id).setVisible(true);
+            }
         }
+        
     }//GEN-LAST:event_cmdUpdateActionPerformed
 
     private void cmdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddActionPerformed
-       new stock_crud("add", "").setVisible(true);
+ 
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            new stock_crud("add", user_id).setVisible(true);
+        }
+        
     }//GEN-LAST:event_cmdAddActionPerformed
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
@@ -252,27 +291,41 @@ public class stock extends javax.swing.JPanel  {
     }//GEN-LAST:event_refreshActionPerformed
 
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
-        if(tableData.getSelectedColumn() != -1){
-            int selectedRow = tableData.getSelectedRow();
-            String id = tableData.getValueAt(selectedRow, 0).toString();
-            String name = tableData.getValueAt(selectedRow, 1).toString();
-            try{
-                if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
-                    String sql = q.deleteOneData("items", id);
-                    st = conn.con.createStatement();
-                    st.execute(sql);
-                    getStock("", 0);
-                    JOptionPane.showMessageDialog(null, "Berhasil di hapus");
+   
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            if(tableData.getSelectedColumn() != -1){
+                int selectedRow = tableData.getSelectedRow();
+                String id = tableData.getValueAt(selectedRow, 0).toString();
+                String name = tableData.getValueAt(selectedRow, 1).toString();
+                try{
+                    if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
+                        String sql = q.deleteOneData("items", id);
+                        st = conn.con.createStatement();
+                        st.execute(sql);
+                        getStock("", 0);
+                        JOptionPane.showMessageDialog(null, "Berhasil di hapus");
+                    }
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(null,e);
                 }
-            }catch(Exception e){
-                JOptionPane.showMessageDialog(null,e);
             }
         }
+        
     }//GEN-LAST:event_cmdDeleteActionPerformed
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void printActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printActionPerformed
+        try {
+            tableData.print();
+        } catch (PrinterException ex) {
+            Logger.getLogger(stock.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_printActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -280,6 +333,7 @@ public class stock extends javax.swing.JPanel  {
     private javax.swing.JButton cmdDelete;
     private javax.swing.JButton cmdUpdate;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton print;
     private javax.swing.JButton refresh;
     private javax.swing.JTable tableData;
     private javax.swing.JComboBox<String> txtFilter;

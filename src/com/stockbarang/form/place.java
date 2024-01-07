@@ -3,9 +3,13 @@ package com.stockbarang.form;
 import com.stockbarang.db.ConnectDB;
 import com.stockbarang.db.Helper;
 import com.stockbarang.db.Query;
+import com.stockbarang.model.Auth;
 import com.stockbarang.utils.place_crud;
+import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -27,8 +31,14 @@ public class place extends javax.swing.JPanel  {
     JComboBox comboBox = new JComboBox();
     private DefaultComboBoxModel model;
     DefaultCellEditor defaultCellEditor;
+     String user_id = "";
+    String user_name = "";
+    String user_role = "";
     public place() {
         initComponents();
+        user_id = Auth.getUserID();
+        user_name = Auth.getUser();
+        user_role = Auth.getUserRole();
         conn = new ConnectDB();
         getPlace();
     }
@@ -70,6 +80,7 @@ public class place extends javax.swing.JPanel  {
         cmdUpdate = new javax.swing.JButton();
         cmdDelete = new javax.swing.JButton();
         refresh = new javax.swing.JButton();
+        print = new javax.swing.JButton();
 
         setOpaque(false);
 
@@ -133,6 +144,13 @@ public class place extends javax.swing.JPanel  {
             }
         });
 
+        print.setText("Print");
+        print.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -144,8 +162,9 @@ public class place extends javax.swing.JPanel  {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cmdAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(refresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cmdUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmdUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(cmdDelete, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(print, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(234, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -162,21 +181,35 @@ public class place extends javax.swing.JPanel  {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cmdUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cmdDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(print)))
                 .addContainerGap(128, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
-        if(tableData.getSelectedColumn() != -1){
-            int selectedRow = tableData.getSelectedRow();
-            String id = tableData.getValueAt(selectedRow, 0).toString();
-            new place_crud("update", id).setVisible(true);
+    
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            if(tableData.getSelectedColumn() != -1){
+                int selectedRow = tableData.getSelectedRow();
+                String id = tableData.getValueAt(selectedRow, 0).toString();
+                new place_crud("update", id).setVisible(true);
+            }
         }
+        
     }//GEN-LAST:event_cmdUpdateActionPerformed
 
     private void cmdAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddActionPerformed
-       new place_crud("add", "").setVisible(true);
+    
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            new place_crud("add", user_id).setVisible(true);
+        }
+       
     }//GEN-LAST:event_cmdAddActionPerformed
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
@@ -184,36 +217,51 @@ public class place extends javax.swing.JPanel  {
     }//GEN-LAST:event_refreshActionPerformed
 
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
-        if(tableData.getSelectedColumn() != -1){
-            int selectedRow = tableData.getSelectedRow();
-            String id = tableData.getValueAt(selectedRow, 0).toString();
-            String name = tableData.getValueAt(selectedRow, 1).toString();
-            try{
-                String sql2 = q.getAllWhereIdBeforeDelete("items", "place", id);
-                st = conn.con.createStatement();
-                re = st.executeQuery(sql2);
-                System.out.println(sql2);
-                if(!re.next()){
-                    try{
-                        if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
-                            String sql = q.deleteOneData("place", id);
-                            st = conn.con.createStatement();
-                            st.execute(sql);
-                            getPlace();
-                            JOptionPane.showMessageDialog(null, "Berhasil di hapus");
+
+        if(user_name.equals("") || user_id.equals("")){
+            JOptionPane.showMessageDialog(null, "ANDA HARUS LOGIN DAHULU!");
+        }else{
+            if(tableData.getSelectedColumn() != -1){
+                int selectedRow = tableData.getSelectedRow();
+                String id = tableData.getValueAt(selectedRow, 0).toString();
+                String name = tableData.getValueAt(selectedRow, 1).toString();
+                try{
+                    String sql2 = q.getAllWhereIdBeforeDelete("items", "place", id);
+                    st = conn.con.createStatement();
+                    re = st.executeQuery(sql2);
+                    System.out.println(sql2);
+                    if(!re.next()){
+                        try{
+                            if(JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus "+ name +"?") ==  0){
+                                String sql = q.deleteOneData("place", id);
+                                st = conn.con.createStatement();
+                                st.execute(sql);
+                                getPlace();
+                                JOptionPane.showMessageDialog(null, "Berhasil di hapus");
+                            }
+                        }catch(Exception e){
+                            JOptionPane.showMessageDialog(null,"Terjadi kesalahan!");
                         }
-                    }catch(Exception e){
-                        JOptionPane.showMessageDialog(null,"Terjadi kesalahan!");
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Masih ada stock yang memakai kategori ini");
                     }
-                }else{
-                    JOptionPane.showMessageDialog(null, "Masih ada stock yang memakai kategori ini");
+
+                }catch(Exception e){
+                    System.out.println(e);
                 }
-                
-            }catch(Exception e){
-                System.out.println(e);
             }
         }
+        
+        
     }//GEN-LAST:event_cmdDeleteActionPerformed
+
+    private void printActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printActionPerformed
+          try {
+            tableData.print();
+        } catch (PrinterException ex) {
+            Logger.getLogger(stock.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_printActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -221,6 +269,7 @@ public class place extends javax.swing.JPanel  {
     private javax.swing.JButton cmdDelete;
     private javax.swing.JButton cmdUpdate;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton print;
     private javax.swing.JButton refresh;
     private javax.swing.JTable tableData;
     // End of variables declaration//GEN-END:variables

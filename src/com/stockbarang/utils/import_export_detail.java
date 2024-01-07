@@ -24,12 +24,14 @@ public class import_export_detail extends javax.swing.JFrame {
     ResultSet re;
     Query q;
     Helper helper;
+    String table;
     public import_export_detail(String id, String desc, String stock_all, String date, String type) {
         initComponents();
         conn = new ConnectDB();
         txtDesc.setText(desc);
         txtStockAll.setText(stock_all);
         txtDate.setText(date);
+        table = type;
         getData(id);
     }
 
@@ -154,7 +156,8 @@ public class import_export_detail extends javax.swing.JFrame {
         DefaultTableModel data = new DefaultTableModel(null,header);
         tableData.setModel(data);
         try {
-            String sql = q.getWithJoin4TableWhereAnotherId("import_items", "import", id, "items", "category", "place");
+            String sql = q.getWithJoin4TableWhereAnotherId(table+"_items", table, id, "items", "category", "place");
+             System.out.print(sql);
             st = conn.con.createStatement();
             re = st.executeQuery(sql);
             

@@ -8,6 +8,15 @@ public class Query {
     public static String insertItems(String column){
         return "INSERT INTO items (items_category_id, items_place_id, items_name, items_price, items_stock) VALUES (" + column +")";
     }
+    public static String insertImportExport(String table, String column){
+        return "INSERT INTO "+table+" (users_id, "+table+"_desc, "+table+"_date, "+table+"_stock_all) VALUES (" + column +")";
+    }
+    public static String insertImportExportItems(String table, String column){
+        return "INSERT INTO "+table+"_items ("+table+"_items_"+table+"_id, "+table+"_items_items_id, "+table+"_items_category_id, "+table+"_items_place_id, "+table+"_items_stock) VALUES (" + column +")";
+    }
+    public static String updateImportExport(String table, String stock, String id){
+        return "UPDATE "+table+" SET "+table+"_stock_all = '"+stock+"' WHERE "+table+"_id = " + id;
+    }
     public static String insertPlace(String column){
         return "INSERT INTO place VALUES (null, '" + column +"');";
     }
@@ -29,6 +38,9 @@ public class Query {
     public static String getSearchExport(String search){
         return "SELECT * FROM export WHERE export_desc LIKE '%" + search + "%'";
     }
+    public static String getAllWhereAnotherId(String table,String another, String id){
+        return "SELECT * FROM " + table + " WHERE " + another + "_id = '" + id +"'";
+    }
     public static String getAllWhereId(String table, String id){
         return "SELECT * FROM " + table + " WHERE " + table + "_id = '" + id +"'";
     }
@@ -41,11 +53,25 @@ public class Query {
     public static String getAny(String table, String any){
         return "SELECT " + any + " FROM " + table;
     }
+    public static String login(String name, String password){
+        return "SELECT * FROM users WHERE users_name='" + name + "' AND users_password='" + password + "'";
+    }
+    public static String register(String name, String password){
+        return "INSERT INTO users (role, users_name, users_password) VALUES ('0', '"+name+"', '"+password+"')";
+    }
     public static String updateItemsWhereId(String table, String id, String column){
         return "UPDATE " + table + " SET " + column + " WHERE " + table + "_id = '" + id + "'";
     }
     public static String deleteWhereId(String table, String id){
         return "DELETE FROM " + table + " WHERE id = '" + id + "'";
+    }
+    public static String getLastImportAndExport(String table){
+        return "SELECT *\n" +
+                "FROM (\n" +
+                "  SELECT *, ROW_NUMBER() OVER (ORDER BY "+table+"_items_id DESC) AS is_last\n" +
+                "  FROM "+table+"_items\n" +
+                ") AS subquery\n" +
+                "WHERE is_last = 1;";
     }
     public static String getAllWithJoin3TableSearchFromTableWithFilter(String fromTable, String table1, String table2, String search, int type){
         String filter = type == 0

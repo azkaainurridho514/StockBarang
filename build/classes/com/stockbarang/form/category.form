@@ -26,8 +26,9 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="cmdAdd" max="32767" attributes="0"/>
                   <Component id="refresh" max="32767" attributes="0"/>
-                  <Component id="cmdUpdate" min="-2" pref="100" max="-2" attributes="0"/>
-                  <Component id="cmdDelete" min="-2" pref="100" max="-2" attributes="0"/>
+                  <Component id="cmdUpdate" pref="100" max="32767" attributes="0"/>
+                  <Component id="cmdDelete" pref="100" max="32767" attributes="0"/>
+                  <Component id="print" max="32767" attributes="0"/>
               </Group>
               <EmptySpace pref="234" max="32767" attributes="0"/>
           </Group>
@@ -48,6 +49,8 @@
                       <Component id="cmdUpdate" min="-2" pref="28" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="cmdDelete" min="-2" pref="28" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="print" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace pref="128" max="32767" attributes="0"/>
@@ -146,6 +149,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="print">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Print"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

@@ -24,7 +24,7 @@ public class place_crud extends javax.swing.JFrame {
     String action = "";
     String id = "";
     public place_crud(String act, String ids) {
-        IntelliJTheme.setup(place_crud.class.getResourceAsStream("/template.theme.json"));
+//        IntelliJTheme.setup(place_crud.class.getResourceAsStream("/template.theme.json"));
         conn = new ConnectDB();
         initComponents();
         if(act.equals("add")){
